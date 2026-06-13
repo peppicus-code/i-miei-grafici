@@ -4,7 +4,7 @@ import plotly.express as px
 import json
 import urllib.request
 import urllib.parse
-import numpy as np  # Sistemata l'importazione di numpy che causava il NameError
+import numpy as np
 
 # Configura l'app a schermo intero (Wide) cinematografico
 st.set_page_config(layout="wide")
@@ -35,7 +35,7 @@ if avvia_animazione and prodotto_cercato:
         st.write("🤖 L'IA sta raccogliendo ed elaborando i dati dal 1980 ad oggi...")
     
     # Prompt per istruire l'IA a restituire solo codice JSON pulito
-    prompt = f"Crea una tabella storica reale o verosimile per l'argomento '{prodotto_cercato}' dal 1980 al 2025. Voglio un elenco JSON con esattamente 5 elementi/competitori principali per gli anni 1980, 1990, 2000, 2010, 2020, 2025. Restituisci SOLO un array JSON senza testo aggiuntivo, dove ogni oggetto ha i campi 'Anno' (stringa), 'Nome' (stringa), 'Valore' (numero). Esempio: [{{\"Anno\": \"1980\", \"Nome\": \"A\", \"Valore\": 10}}]"
+    prompt = f"Crea una tabella storica reale o verosimile per l'argomento '{prodotto_cercato}' dal 1980 al 2025. Voglio un elenco JSON con esattamente 5 elementi/competitori principali per gli anni 1980, 1990, 2000, 2010, 2020, 2025. Restituisci SOLO un array JSON senza testo aggiuntivo, dove ogni oggetto ha i campi 'Anno' (stringa), 'Nome' (stringa), 'Valore' (numero). Esempio: [{Validare JSON}]"
     
     # Usiamo un server proxy gratuito per interrogare l'IA senza configurazioni complesse
     url_ia = f"https://pollinations.ai{urllib.parse.quote(prompt)}"
@@ -62,14 +62,18 @@ if avvia_animazione and prodotto_cercato:
             df_long["Anno"] = df_long["Anno"].astype(str)
             
     except Exception:
-        # Se l'IA è sovraccarica, l'algoritmo di riserva ora ha numpy correttamente caricato
+        # ALGORITMO DI RISERVA PERFETTAMENTE ORDINATO E CORRETTO (Risolto SyntaxError alla linea 72)
         voci = [prodotto_cercato, "Competitore A", "Competitore B", "Media Globale", "Indice di Riferimento"]
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
         np.random.seed(sum(ord(c) for c in prodotto_cercato))
         for i, anno in enumerate(anni):
             for j, nome in enumerate(voci):
-                valore = 20 + (j * 5) + (i * 6 if nome == producto_cercato if 'producto_cercato' in locals() else prodotto_cercato else i * 2) + np.random.uniform(-3, 10)
+                if nome == prodotto_cercato:
+                    spinta = i * 6
+                else:
+                    spinta = i * 2
+                valore = 20 + (j * 5) + spinta + np.random.uniform(-3, 10)
                 lista_record.append({"Anno": str(anno), "Nome": nome, "Valore": round(max(5, valore), 1)})
         df_long = pd.DataFrame(lista_record)
 
