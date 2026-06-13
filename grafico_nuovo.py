@@ -18,7 +18,7 @@ with col_testi:
     st.subheader("Hub Classifiche Globali 🌍")
     st.write("Seleziona la classifica reale o attiva la ricerca libera personalizzata.")
     
-    # MENU UNIFICATO AGGIORNATO CON ANCHE I CANTANTI REALI
+    # MENU UNIFICATO AGGIORNATO CON TUTTE LE VOCI REALI
     scelta_menu = st.selectbox(
         "Scegli l'argomento da visualizzare:",
         [
@@ -50,9 +50,9 @@ colonna_elemento = ""
 colonna_valore = ""
 anni_predefiniti = ["1980", "1990", "2000", "2010", "2020", "2025"]
 
-# --- 1. CANTANTI PIÙ RICCHI (DATI REALI AGGIUNTI) ---
+# --- 1. CANTANTI PIÙ RICCHI ---
 if scelta_menu == "Cantanti più Ricchi della Storia 🎤":
-    titolo_grafico = "I Cantanti più Ricchi al Mondo (Patrimonio stimato in Milioni di $)"
+    titolo_grafico = "I Cantanti più Ricchi al Mondo (Patrimonio in Milioni di $)"
     colonna_elemento = "Cantante / Artista"
     colonna_valore = "Patrimonio (Milioni $)"
     elementi = ["Paul McCartney", "Rihanna", "Jay-Z", "Madonna", "Taylor Swift"]
@@ -173,7 +173,7 @@ elif scelta_menu == "Dischi e Album più Venduti di Sempre 🎵":
             lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(valore_calcolato, 1)})
     df_long = pd.DataFrame(lista_record)
 
-# --- 10. OPZIONE RICERCA LIBERA PERSONALIZZATA (ORO, FRUMENTO, RISO...) ---
+# --- 10. RICERCA LIBERA PERSONALIZZATA (ORO, FRUMENTO, RISO...) ---
 elif scelta_menu == "Ricerca un argomento personalizzato... 🔍" and prodotto_cercato:
     titolo_grafico = f"Evoluzione Dati Mercato: {prodotto_cercato}"
     colonna_elemento = "Mercato / Indice"
