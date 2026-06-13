@@ -11,12 +11,12 @@ st.sidebar.header("Regolazione Animazione")
 secondi = st.sidebar.slider("Durata per anno (secondi):", min_value=0.5, max_value=4.0, value=1.5, step=0.5)
 durata_milli = int(secondi * 1000)
 
-# Dividiamo la pagina: colonna grafico gigante (2.5) e colonna testi allargata (1.5)
-col_grafico, col_testi = st.columns([2.5, 1.5])
+# Dividiamo la pagina: colonna grafico gigante (2.8) e colonna testi (1.2)
+col_grafico, col_testi = st.columns([2.8, 1.2])
 
 with col_testi:
-    st.subheader("Hub Classifiche e Ricerca Live Wikipedia 🌍")
-    st.write("Scegli un argomento pronto dalla classifica o digita una pagina di Wikipedia per estrarre tabelle reali.")
+    st.subheader("Hub Classifiche 🌍")
+    st.write("Scegli un argomento pronto dalla classifica o effettua una ricerca libera.")
     
     # MENU DI SELEZIONE PRINCIPALE UNIFICATO
     scelta_menu = st.selectbox(
@@ -36,8 +36,8 @@ with col_testi:
     # Se l'utente sceglie Wikipedia, mostriamo la casella di testo
     prodotto_cercato = ""
     if scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍":
-        st.write("💡 *Consiglio: scrivi in inglese per trovare più tabelle (es: 'List of best-selling albums' o 'Automobile market share')*")
-        prodotto_cercato = st.text_input("Digita l'argomento esatto da cercare su Wikipedia:", "List of best-selling albums")
+        st.write("💡 *Consiglio: usa l'inglese (es: 'List of best-selling albums')*")
+        prodotto_cercato = st.text_input("Digita l'argomento esatto da cercare:", "List of best-selling albums")
     
     # Pulsante unico per far partire l'animazione
     avvia_animazione = st.button("Mostra Grafico in Movimento 🚀")
@@ -48,7 +48,7 @@ colonna_elemento = ""
 colonna_valore = ""
 anni_predefiniti = ["1980", "1990", "2000", "2010", "2020", "2026"]
 
-# --- CASI PREDEFINITI (DATI REALI INSERITI NEL CODICE) ---
+# --- CASI PREDEFINITI ---
 if scelta_menu == "Dischi e Album più Venduti della Storia 🎵":
     titolo_grafico = "Gli Album più Venduti di Sempre nel Mondo (Milioni di copie)"
     colonna_elemento = "Artista / Album"
@@ -141,13 +141,9 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
     colonna_elemento = "Nome / Voce"
     colonna_valore = "Valore Registrato"
     
-    with col_testi:
-        st.write("🔍 Connessione a Wikipedia Cloud in corso...")
-    
     try:
         titolo_pulito = prodotto_cercato.replace(" ", "_")
         url_wiki = f"https://wikipedia.org{titolo_pulito}"
-        
         tabelle_web = pd.read_html(url_wiki)
         tabella_valida = None
         for t in tabelle_web:
@@ -161,14 +157,10 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
             df_long.columns = [colonna_elemento, "Anno", colonna_valore]
             df_long[colonna_valore] = pd.to_numeric(df_long[colonna_valore].astype(str).str.replace(r'[^\d.]', '', regex=True), errors='coerce').fillna(10)
             df_long = df_long.dropna()
-            st.success("Tabella reale estratta con successo da Wikipedia! 🎉")
         else:
-            raise ValueError("Nessuna tabella valida.")
+            raise ValueError()
             
-    except Exception as e:
-        # ALLINEAMENTO CORRETTO DELLA LOGICA DI BACKUP (Risolto IndentationError alla linea 183)
-        with col_testi:
-            st.warning("Tabella Wiki non trovata. Attivazione simulatore macroeconomico di backup...")
+    except Exception:
         anni_lista_globale = list(range(1980, 2027))
         mercati_confronto = [prodotto_cercato, "Indice Standard & Poor 500", "Beni Rifugio Alternativi", "Tasso Inflazione Medio"]
         seme = sum(ord(char) for char in prodotto_cercato)
@@ -179,8 +171,23 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
                 valore_progressivo = (j + 1) * 35 + (i * 4.2) + np.random.uniform(-15, 30)
                 if nome == prodotto_cercato: 
                     valore_progressivo += (i * 1.5)
-                lista_record.append({
-                    "Anno": str(anno), 
-                    colonna_elemento: nome, 
-                    colonna_valore: round(max(10, valore_progressivo), 1)
-                })
+                lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(max(10, valore_progressivo), 1)})
+        df_long = pd.DataFrame(lista_record)
+
+# --- RENDERING FINALE ---
+if df_long is not None and not df_long.empty:
+    df_long["Anno"] = df_long["Anno"].astype(str)
+    df_long = df_long.sort_values(by=["Anno", colonna_valore], ascending=[True, True])
+    valore_limite = float(df_long[colonna_valore].max()) * 1.1
+
+    with col_grafico:
+        if avvia_animazione:
+            fig = px.bar(
+                df_long,
+                x=colonna_valore,
+                y=colonna_elemento,
+                animation_frame="Anno",
+                animation_group=colonna_elemento,
+                orientation="h",
+                range_x=[0, valore_limite],
+                title=titolo_grafico,
