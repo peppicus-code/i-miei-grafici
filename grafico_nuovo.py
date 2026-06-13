@@ -16,7 +16,7 @@ col_grafico, col_testi = st.columns([2.5, 1.5])
 
 with col_testi:
     st.subheader("Hub Classifiche e Ricerca Live Wikipedia 🌍")
-    st.write("Scegli un argomento pronto o digita una pagina di Wikipedia per estrarre tabelle reali.")
+    st.write("Scegli un argomento pronto dalla classifica o digita una pagina di Wikipedia per estrarre tabelle reali.")
     
     # MENU DI SELEZIONE PRINCIPALE UNIFICATO
     scelta_menu = st.selectbox(
@@ -145,33 +145,28 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
         st.write("🔍 Connessione a Wikipedia Cloud in corso...")
     
     try:
-        # Trasformiamo lo spazio in underscore per i link di Wikipedia
         titolo_pulito = prodotto_cercato.replace(" ", "_")
-        url_wiki = f"https://en.wikipedia.org/wiki/{titolo_pulito}"
+        url_wiki = f"https://wikipedia.org{titolo_pulito}"
         
-        # Pandas scarica TUTTE le tabelle presenti in quella pagina web
         tabelle_web = pd.read_html(url_wiki)
-        
-        # Cerchiamo una tabella adatta che abbia dati numerici
         tabella_valida = None
         for t in tabelle_web:
-            if t.shape[1] >= 3: # Vogliamo tabelle con almeno 3 colonne
+            if t.shape >= 3:
                 tabella_valida = t
                 break
                 
         if tabella_valida is not None:
-            # Pulizia e formattazione automatica della tabella reale estratta dal web
             tabella_valida.columns = [str(c) for c in tabella_valida.columns]
-            df_long = tabella_valida.melt(id_vars=[tabella_valida.columns[0]], value_vars=tabella_valida.columns[1:], var_name="Anno", value_name=colonna_valore)
+            df_long = tabella_valida.melt(id_vars=[tabella_valida.columns], value_vars=tabella_valida.columns[1:], var_name="Anno", value_name=colonna_valore)
             df_long.columns = [colonna_elemento, "Anno", colonna_valore]
             df_long[colonna_valore] = pd.to_numeric(df_long[colonna_valore].astype(str).str.replace(r'[^\d.]', '', regex=True), errors='coerce').fillna(10)
             df_long = df_long.dropna()
             st.success("Tabella reale estratta con successo da Wikipedia! 🎉")
         else:
-            raise ValueError("Nessuna tabella dati idonea trovata.")
+            raise ValueError("Nessuna tabella valida.")
             
     except Exception as e:
-        # ALGORITMO DI BACKUP: Se la pagina Wiki non ha tabelle, l'app genera un trend economico simulato al volo (Evita il No Results!)
+        # ALLINEAMENTO CORRETTO DELLA LOGICA DI BACKUP (Risolto IndentationError alla linea 183)
         with col_testi:
             st.warning("Tabella Wiki non trovata. Attivazione simulatore macroeconomico di backup...")
         anni_lista_globale = list(range(1980, 2027))
@@ -181,3 +176,11 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
         lista_record = []
         for i, anno in enumerate(anni_lista_globale):
             for j, nome in enumerate(mercati_confronto):
+                valore_progressivo = (j + 1) * 35 + (i * 4.2) + np.random.uniform(-15, 30)
+                if nome == prodotto_cercato: 
+                    valore_progressivo += (i * 1.5)
+                lista_record.append({
+                    "Anno": str(anno), 
+                    colonna_elemento: nome, 
+                    colonna_valore: round(max(10, valore_progressivo), 1)
+                })
