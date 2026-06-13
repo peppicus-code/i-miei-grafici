@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 import json
 import urllib.request
+import urllib.parse
+import numpy as np  # Sistemata l'importazione di numpy che causava il NameError
 
 # Configura l'app a schermo intero (Wide) cinematografico
 st.set_page_config(layout="wide")
@@ -60,14 +62,14 @@ if avvia_animazione and prodotto_cercato:
             df_long["Anno"] = df_long["Anno"].astype(str)
             
     except Exception:
-        # Se l'IA è sovraccarica, usiamo un algoritmo matematico di riserva intelligente
+        # Se l'IA è sovraccarica, l'algoritmo di riserva ora ha numpy correttamente caricato
         voci = [prodotto_cercato, "Competitore A", "Competitore B", "Media Globale", "Indice di Riferimento"]
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
         np.random.seed(sum(ord(c) for c in prodotto_cercato))
         for i, anno in enumerate(anni):
             for j, nome in enumerate(voci):
-                valore = 20 + (j * 5) + (i * 6 if nome == prodotto_cercato else i * 2) + np.random.uniform(-3, 10)
+                valore = 20 + (j * 5) + (i * 6 if nome == producto_cercato if 'producto_cercato' in locals() else prodotto_cercato else i * 2) + np.random.uniform(-3, 10)
                 lista_record.append({"Anno": str(anno), "Nome": nome, "Valore": round(max(5, valore), 1)})
         df_long = pd.DataFrame(lista_record)
 
