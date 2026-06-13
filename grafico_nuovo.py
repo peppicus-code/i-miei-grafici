@@ -9,75 +9,62 @@ import numpy as np
 # Configura l'app a schermo intero (Wide) cinematografico
 st.set_page_config(layout="wide")
 
-# Barra laterale sinistra per la velocità dell'animazione
 st.sidebar.header("Regolazione Animazione")
 secondi = st.sidebar.slider("Durata per anno (secondi):", min_value=0.5, max_value=4.0, value=1.5, step=0.5)
 durata_milli = int(secondi * 1000)
 
-# Dividiamo la pagina: colonna grafico gigante (2.8) e colonna testi (1.2)
 col_grafico, col_testi = st.columns([2.8, 1.2])
 
 with col_testi:
-    st.subheader("Generatore Universale IA 🧠")
-    st.write("Scrivi qualsiasi argomento esistente al mondo. L'Intelligenza Artificiale cercherà i dati e creerà il grafico animato.")
+    st.subheader("Generatore Universale IA Google 🧠")
+    st.write("Inserisci la tua chiave gratuita di Google e digita qualsiasi argomento per estrarre i nomi veri.")
     
-    # CASELLA DI RICERCA UNICA E GLOBALE
-    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico? (Es: Oro, FIAT, Paesi più violenti, Calciatori più pagati):", "Oro")
+    # LA CASELLA CHE TI MANCAVA COMPARIREBBE QUI
+    chiave_google = st.text_input("Incolla qui la tua API Key di Google Gemini:", type="password")
     
-    # Pulsante unico per far partire l'animazione
+    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico?", "Calciatori più pagati")
     avvia_animazione = st.button("Genera Grafico in Movimento 🚀")
 
 df_long = None
 titolo_grafico = f"Andamento Storico: {prodotto_cercato}"
 
 if avvia_animazione and prodotto_cercato:
-    with col_testi:
-        st.write("🤖 L'IA sta raccogliendo ed elaborando i dati dal 1980 ad oggi...")
-    
-    # Prompt corretto e pulito senza parentesi graffe vaganti (Risolto SyntaxError alla linea 38)
-    prompt = f"Crea una tabella storica reale o verosimile per l'argomento {prodotto_cercato} dal 1980 al 2025. Voglio un elenco JSON con esattamente 5 competitori principali per gli anni 1980, 1990, 2000, 2010, 2020, 2025. Restituisci SOLO un array JSON senza markdown e senza testo aggiuntivo, dove ogni oggetto ha i campi Anno, Nome, Valore."
-    
-    # Usiamo un server proxy gratuito per interrogare l'IA senza configurazioni complesse
-    url_ia = f"https://pollinations.ai{urllib.parse.quote(prompt)}"
-    
-    try:
-        # Python interroga l'IA sul web
-        req = urllib.request.Request(url_ia, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            risposta_ia = response.read().decode('utf-8')
-            
-            # Puliamo la risposta da eventuali blocchi di testo o formattazioni markdown
-            if "```json" in risposta_ia:
-                risposta_ia = risposta_ia.split("```json")[1].split("```")[0].strip()
-            elif "```" in risposta_ia:
-                risposta_ia = risposta_ia.split("```")[1].split("```")[0].strip()
-            
-            # Trasformiamo il testo dell'IA in una tabella vera di Pandas
-            dati_json = json.loads(risposta_ia.strip())
-            df_long = pd.DataFrame(dati_json)
-            
-            # Verifichiamo che le colonne siano quelle corrette
-            df_long.columns = ["Anno", "Nome", "Valore"]
-            df_long["Valore"] = pd.to_numeric(df_long["Valore"])
-            df_long["Anno"] = df_long["Anno"].astype(str)
-            
-    except Exception:
-        # Algoritmo di riserva perfettamente ordinato e corretto
-        voci = [prodotto_cercato, "Competitore A", "Competitore B", "Media Globale", "Indice di Riferimento"]
+    if not chiave_google:
+        st.sidebar.error("⚠️ Inserisci la tua API Key di Google a destra per attivare i nomi reali!")
+    else:
+        with col_testi:
+            st.write("🤖 L'IA di Google sta analizzando la storia e inserendo i nomi reali...")
+        
+        prompt = f"Crea una tabella storica reale o verosimile per l'argomento {prodotto_cercato} dal 1980 al 2025. Identifica i 5 protagonisti reali o elementi reali piu famosi di questo settore. Genera un elenco in formato JSON pulito. Ogni oggetto deve avere i campi Anno (scegli tra 1980, 1990, 2000, 2010, 2020, 2025), Nome (il nome reale del calciatore, nazione o brand), Valore (il numero stimato o reale). Restituisci SOLO l'array JSON senza markdown e senza testo aggiuntivo."
+        
+        url_gemini = f"https://googleapis.com{chiave_google}"
+        corpo_richiesta = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
+        
+        try:
+            req = urllib.request.Request(url_gemini, data=corpo_richiesta, headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req) as response:
+                risposta = json.loads(response.read().decode('utf-8'))
+                testo_ia = risposta['candidates'][0]['content']['parts'][0]['text']
+                testo_ia = testo_ia.replace("```json", "").replace("```", "").strip()
+                dati_json = json.loads(testo_ia)
+                df_long = pd.DataFrame(dati_json)
+                df_long.columns = ["Anno", "Nome", "Valore"]
+                df_long["Valore"] = pd.to_numeric(df_long["Valore"])
+                df_long["Anno"] = df_long["Anno"].astype(str)
+        except Exception:
+            df_long = None
+
+    if df_long is None:
+        voci = [prodotto_cercato, "Competitore A", "Competitore B", "Media Globale", "Indice"]
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
         np.random.seed(sum(ord(c) for c in prodotto_cercato))
         for i, anno in enumerate(anni):
             for j, nome in enumerate(voci):
-                if nome == prodotto_cercato:
-                    spinta = i * 6
-                else:
-                    spinta = i * 2
-                valore = 20 + (j * 5) + spinta + np.random.uniform(-3, 10)
+                valore = 20 + (j * 5) + (i * 6 if nome == prodotto_cercato else i * 2) + np.random.uniform(-3, 10)
                 lista_record.append({"Anno": str(anno), "Nome": nome, "Valore": round(max(5, valore), 1)})
         df_long = pd.DataFrame(lista_record)
 
-# --- RENDERING FINALE ANIMATO ---
 if df_long is not None and not df_long.empty:
     df_long = df_long.sort_values(by=["Anno", "Valore"], ascending=[True, True])
     valore_limite = float(df_long["Valore"].max()) * 1.1
