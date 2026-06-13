@@ -34,8 +34,8 @@ if avvia_animazione and prodotto_cercato:
     with col_testi:
         st.write("🤖 L'IA sta raccogliendo ed elaborando i dati dal 1980 ad oggi...")
     
-    # Prompt per istruire l'IA a restituire solo codice JSON pulito
-    prompt = f"Crea una tabella storica reale o verosimile per l'argomento '{prodotto_cercato}' dal 1980 al 2025. Voglio un elenco JSON con esattamente 5 elementi/competitori principali per gli anni 1980, 1990, 2000, 2010, 2020, 2025. Restituisci SOLO un array JSON senza testo aggiuntivo, dove ogni oggetto ha i campi 'Anno' (stringa), 'Nome' (stringa), 'Valore' (numero). Esempio: [{Validare JSON}]"
+    # Prompt corretto e pulito senza parentesi graffe vaganti (Risolto SyntaxError alla linea 38)
+    prompt = f"Crea una tabella storica reale o verosimile per l'argomento {prodotto_cercato} dal 1980 al 2025. Voglio un elenco JSON con esattamente 5 competitori principali per gli anni 1980, 1990, 2000, 2010, 2020, 2025. Restituisci SOLO un array JSON senza markdown e senza testo aggiuntivo, dove ogni oggetto ha i campi Anno, Nome, Valore."
     
     # Usiamo un server proxy gratuito per interrogare l'IA senza configurazioni complesse
     url_ia = f"https://pollinations.ai{urllib.parse.quote(prompt)}"
@@ -62,7 +62,7 @@ if avvia_animazione and prodotto_cercato:
             df_long["Anno"] = df_long["Anno"].astype(str)
             
     except Exception:
-        # ALGORITMO DI RISERVA PERFETTAMENTE ORDINATO E CORRETTO (Risolto SyntaxError alla linea 72)
+        # Algoritmo di riserva perfettamente ordinato e corretto
         voci = [prodotto_cercato, "Competitore A", "Competitore B", "Media Globale", "Indice di Riferimento"]
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
