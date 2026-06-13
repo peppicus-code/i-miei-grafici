@@ -18,11 +18,11 @@ durata_milli = int(secondi * 1000)
 col_grafico, col_testi = st.columns([2.8, 1.2])
 
 with col_testi:
-    st.subheader("Generatore Universale IA 🧠")
+    st.subheader("Generatore Universale IA 🌍")
     st.write("Digita qualsiasi argomento al mondo. L'Intelligenza Artificiale genererà all'istante i dati storici con i nomi reali dei protagonisti.")
     
     # CASELLA DI RICERCA UNICA E GLOBALE
-    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico? (Es: Tennisti più ricchi, Calciatori più pagati, Paesi più violenti, Case automobilistiche):", "Tennisti più ricchi")
+    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico? (Es: Giocatori di golf più ricchi, Tennisti più ricchi, Paesi più violenti):", "Giocatori di golf più ricchi")
     
     # Pulsante unico per far partire l'animazione
     avvia_animazione = st.button("Genera Grafico in Movimento 🚀")
@@ -34,7 +34,7 @@ if avvia_animazione and prodotto_cercato:
     with col_testi:
         st.write("🤖 Estrazione e formattazione dei nomi reali in corso...")
     
-    prompt = f"Genera una tabella storica reale o accuratamente stimata per l'argomento '{prodotto_cercato}' dal 1980 al 2025. Identifica i 5 protagonisti/elementi reali più famosi di questo settore (usa nomi reali di persone o nazioni vere). Crea un elenco JSON. Ogni oggetto deve avere i campi 'Anno' (scegli tra '1980', '1990', '2000', '2010', '2020', '2025'), 'Nome' (stringa col nome reale), 'Valore' (numero). Restituisci SOLO l'array JSON senza markdown e senza testo aggiuntivo."
+    prompt = f"Genera una tabella storica reale o accuratamente stimata per l'argomento '{prodotto_cercato}' dal 1980 al 2025. Identifica i 5 protagonisti/elementi reali più famosi di questo settore. Crea un elenco JSON. Ogni oggetto deve avere i campi 'Anno' (scegli tra '1980', '1990', '2000', '2010', '2020', '2025'), 'Nome' (stringa col nome reale o marca reale), 'Valore' (numero). Restituisci SOLO l'array JSON senza markdown e senza testo aggiuntivo."
     
     url_ia = f"https://pollinations.ai{urllib.parse.quote(prompt)}?json=true"
     
@@ -50,21 +50,23 @@ if avvia_animazione and prodotto_cercato:
             df_long["Anno"] = df_long["Anno"].astype(str)
             
     except Exception:
-        # ALGORITMO DI RISERVA POTENZIATO CON TUTTE LE CATEGORIE SPORTIVE E SOCIALI VERI
+        # ALGORITMO DI RISERVA INTELLIGENTE E ADATTIVO
         testo_ricerca = prodotto_cercato.lower()
         
         if "tennis" in testo_ricerca or "tennist" in testo_ricerca:
             voci = ["Roger Federer", "Rafael Nadal", "Novak Djokovic", "Serena Williams", "Pete Sampras"]
-        elif "calciat" in testo_ricerca or "giocator" in testo_ricerca or "calcio" in testo_ricerca:
+        elif "calcio" in testo_ricerca or "calciat" in testo_ricerca or "giocator" in testo_ricerca:
             voci = ["C. Ronaldo", "Lionel Messi", "Neymar Jr", "Kylian Mbappé", "Zlatan Ibrahimovic"]
         elif "paes" in testo_ricerca or "nazion" in testo_ricerca or "violent" in testo_ricerca or "pericol" in testo_ricerca:
             voci = ["Venezuela", "Papua Nuova Guinea", "Sudafrica", "Afghanistan", "Honduras"]
         elif "auto" in testo_ricerca or "macchin" in testo_ricerca or "produttor" in testo_ricerca:
             voci = ["Toyota", "Volkswagen", "Ford", "FIAT", "Hyundai"]
-        elif "ricch" in testo_ricerca or "miliard" in testo_ricerca or "uomin" in testo_ricerca:
+        elif "miliard" in testo_ricerca or "ricch" in testo_ricerca or "uomin" in testo_ricerca:
             voci = ["Elon Musk", "Jeff Bezos", "Bill Gates", "Warren Buffett", "Bernard Arnault"]
         else:
-            voci = [prodotto_cercato, "Competitore Principale", "Indice Europa", "Indice America", "Media Globale"]
+            # Se l'argomento non è tra quelli fissi (es. Golf), isola la parola chiave e crea i competitor adatti
+            parola_chiave = prodotto_cercato.split("più")[0].strip() if "più" in prodotto_cercato else prodotto_cercato
+            voci = [f"Campione {parola_chiave} 1", f"Campione {parola_chiave} 2", f"Top {parola_chiave} 3", f"Top {parola_chiave} 4", "Media Settore"]
             
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
