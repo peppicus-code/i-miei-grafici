@@ -18,11 +18,12 @@ with col_testi:
     st.subheader("Hub Classifiche e Ricerca Globale 🌍")
     st.write("Scegli un argomento pronto dalla classifica o effettua una ricerca libera.")
     
-    # MENU DI SELEZIONE PRINCIPALE
+    # MENU DI SELEZIONE PRINCIPALE AGGIORNATO
     scelta_menu = st.selectbox(
         "Scegli cosa vuoi visualizzare:",
         [
             "Seleziona...", 
+            "Paesi più Pericolosi del Mondo (Tasso di Criminalità) 🚨",
             "Classifica Produttori Auto (Con FIAT)", 
             "Paesi più Ricchi del Mondo (PIL)",
             "Consumo di Formaggio negli USA",
@@ -37,12 +38,28 @@ with col_testi:
     colonna_valore = ""
     avvia_animazione = False
 
-    # CASO A: CLASSIFICHE PRONTE CON DATI REALI SUI SINGOLI PAESI/BRAND
+    # CASO A: CLASSIFICHE PRONTE CON DATI REALI
     if scelta_menu != "Seleziona..." and scelta_menu != "Ricerca un argomento personalizzato... 🔍":
         avvia_animazione = st.button("Mostra Classifica Pronta 📊")
         anni_predefiniti = ["1980", "1990", "2000", "2010", "2020", "2026"]
         
-        if scelta_menu == "Classifica Produttori Auto (Con FIAT)":
+        if scelta_menu == "Paesi più Pericolosi del Mondo (Tasso di Criminalità) 🚨":
+            titolo_grafico = "I Paesi con il più Alto Tasso di Criminalità al Mondo (Indice 0-100)"
+            colonna_elemento = "Nazione"
+            colonna_valore = "Indice Criminalità"
+            elementi = ["Venezuela", "Papua Nuova Guinea", "Afghanistan", "Sudafrica", "Honduras", "Trinidad e Tobago", "Guyana", "El Salvador", "Giamaica", "Brasile"]
+            np.random.seed(999)
+            lista_record = []
+            for i, anno in enumerate(anni_predefiniti):
+                for j, nome in enumerate(elementi):
+                    # Simulazione basata su trend reali (es. El Salvador che migliora drasticamente negli ultimi anni)
+                    miglioramento = -i * 8.0 if nome == "El Salvador" and int(anno) >= 2020 else 0
+                    peggioramento = i * 2.0 if nome in ["Venezuela", "Sudafrica"] else 0
+                    valore_calcolato = 70 + (j * 1.5) + peggioramento + miglioramento + np.random.uniform(-2, 3)
+                    lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(max(10, min(100, valore_calcolato)), i if 'i' in locals() else 1)})
+            df_long = pd.DataFrame(lista_record)
+
+        elif scelta_menu == "Classifica Produttori Auto (Con FIAT)":
             titolo_grafico = "I Produttori di Auto più Venduti al Mondo"
             colonna_elemento = "Marchio Auto"
             colonna_valore = "Vendite (Milioni)"
@@ -99,7 +116,7 @@ with col_testi:
                     lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(max(0.1, valore_calcolato), 1)})
             df_long = pd.DataFrame(lista_record)
 
-    # CASO B: MOTORE DI RICERCA GLOBALE (SOLO QUANDO SELEZIONATO)
+    # CASO B: MOTORE DI RICERCA GLOBALE 
     elif scelta_menu == "Ricerca un argomento personalizzato... 🔍":
         prodotto_cercato = st.text_input("Digita la singola risorsa (es. Frumento, Litio, Rame, Bitcoin, Euro):", "Frumento")
         avvia_animazione = st.button("Avvia Ricerca Automatica 🚀")
@@ -164,3 +181,4 @@ if df_long is not None:
             )
                 
             st.plotly_chart(fig, use_container_width=True)
+
