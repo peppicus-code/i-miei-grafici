@@ -171,11 +171,7 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
                 valore_progressivo = (j + 1) * 35 + (i * 4.2) + np.random.uniform(-15, 30)
                 if nome == prodotto_cercato: 
                     valore_progressivo += (i * 1.5)
-                lista_record.append({
-                    "Anno": str(anno), 
-                    colonna_elemento: nome, 
-                    colonna_valore: round(max(10, valore_progressivo), 1)
-                })
+                lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(max(10, valore_progressivo), 1)})
         df_long = pd.DataFrame(lista_record)
 
 # --- RENDERING FINALE ---
@@ -186,10 +182,5 @@ if df_long is not None and not df_long.empty:
 
     with col_grafico:
         if avvia_animazione:
-            fig = px.bar(
-                df_long,
-                x=colonna_valore,
-                y=colonna_elemento,
-                animation_frame="Anno",
-                animation_group=colonna_elemento,
-                orientation="h",
+            fig = px.bar(df_long, x=colonna_valore, y=colonna_elemento, animation_frame="Anno", animation_group=colonna_elemento, orientation="h", range_x=[0, valore_limite], title=titolo_grafico, color=colonna_elemento, text=colonna_valore, height=650)
+            
