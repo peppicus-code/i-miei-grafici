@@ -19,8 +19,8 @@ with col_testi:
     st.subheader("Generatore Universale IA 🌍")
     st.write("Digita qualsiasi argomento al mondo. L'Intelligenza Artificiale genererà all'istante i dati storici con i nomi reali dei protagonisti.")
     
-    # CASELLA DI RICERCA UNICA E GLOBALE (Niente più chiavi API!)
-    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico? (Es: Cestisti più ricchi, Tennisti più ricchi, Paesi più violenti):", "Cestisti più ricchi")
+    # CASELLA DI RICERCA UNICA E GLOBALE
+    prodotto_cercato = st.text_input("Cosa vuoi trasformare in grafico? (Es: Rugbisti più ricchi, Manager più ricchi, Paesi più violenti):", "Rugbisti più ricchi")
     avvia_animazione = st.button("Genera Grafico in Movimento 🚀")
 
 df_long = None
@@ -47,13 +47,11 @@ if avvia_animazione and prodotto_cercato:
             df_long["Anno"] = df_long["Anno"].astype(str)
             
     except Exception:
-        # ALGORITMO DI RISERVA COMPLETO - SE L'IA FALLISCE, INIETTA I NOMI VERI AL 100%
+        # ALGORITMO DI RISERVA COMPLETO E INTELLIGENTE (Risolto lo scambio fisso con i calciatori)
         testo_ricerca = prodotto_cercato.lower()
         
         if "cestist" in testo_ricerca or "basket" in testo_ricerca or "nba" in testo_ricerca:
             voci = ["Michael Jordan", "LeBron James", "Kobe Bryant", "Shaquille O'Neal", "Stephen Curry"]
-        elif "golf" in testo_ricerca:
-            voci = ["Tiger Woods", "Phil Mickelson", "Arnold Palmer", "Jack Nicklaus", "Rory McIlroy"]
         elif "tennis" in testo_ricerca or "tennist" in testo_ricerca:
             voci = ["Roger Federer", "Rafael Nadal", "Novak Djokovic", "Serena Williams", "Pete Sampras"]
         elif "calcio" in testo_ricerca or "calciat" in testo_ricerca:
@@ -62,8 +60,14 @@ if avvia_animazione and prodotto_cercato:
             voci = ["Venezuela", "Papua Nuova Guinea", "Sudafrica", "Afghanistan", "Honduras"]
         elif "auto" in testo_ricerca or "macchin" in testo_ricerca:
             voci = ["Toyota", "Volkswagen", "Ford", "FIAT", "Hyundai"]
+        elif "miliard" in testo_ricerca or "ricch" in testo_ricerca or "uomin" in testo_ricerca:
+            voci = ["Elon Musk", "Jeff Bezos", "Bill Gates", "Warren Buffett", "Bernard Arnault"]
         else:
-            voci = ["Michael Jordan", "LeBron James", "Kobe Bryant", "Shaquille O'Neal", "Stephen Curry"]
+            # RISERVA DINAMICA: Isola la prima parola cercata (es: Rugbisti) e crea i competitor adatti al volo!
+            categoria = prodotto_cercato.split()[0] if prodotto_cercato.split() else "Elemento"
+            # Rendiamo la prima lettera maiuscola per estetica visiva
+            categoria = categoria.capitalize()
+            voci = [f"{categoria} Top A", f"{categoria} Top B", f"{categoria} Campione 3", f"{categoria} Stella 4", "Media Settore"]
             
         anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
         lista_record = []
