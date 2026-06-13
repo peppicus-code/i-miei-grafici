@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# Configura l'app a schermo intero
+# Configura l'app a schermo intero (Wide)
 st.set_page_config(layout="wide")
 
 # Barra laterale sinistra molto semplice
@@ -29,52 +29,37 @@ with col_testi:
     )
 
 df_grafico = None
+anni = ["1980", "1990", "2000", "2010", "2020", "2025"]
 
-# CREAZIONE DELLE TABELLE IN MODO DIRETTO (Formato perfetto per st.bar_chart)
+# GENERAZIONE AUTOMATICA BLINDATA SENZA LISTE NUMERICHE MANUALI
 if scelta_menu == "Dischi e Album più Venduti della Storia 🎵":
-    dati = {
-        "Michael Jackson (Thriller)": [22.0, 26.5, 31.0, 36.2, 42.0, 48.2],
-        "AC/DC (Back in Black)": [20.0, 21.8, 23.6, 25.4, 28.0, 30.1],
-        "Pink Floyd (The Dark Side)": [19.0, 20.2, 21.4, 22.6, 24.2, 25.5],
-        "Whitney Houston (The Bodyguard)": [15.0, 16.5, 18.0, 19.2, 21.0, 22.4],
-        "FIat/Fleetwood Mac (Rumours)": [16.0, 17.1, 18.2, 19.3, 20.5, 21.2]
-    }
-    df_grafico = pd.DataFrame(dati, index=["1980", "1990", "2000", "2010", "2020", "2025"])
+    voci = ["Michael Jackson (Thriller)", "AC/DC (Back in Black)", "Pink Floyd (The Dark Side)", "Whitney Houston", "Fleetwood Mac"]
+    np.random.seed(11)
+    matrice = {v: sorted([round(np.random.uniform(15, 50), 1) for _ in range(6)]) for v in voci}
+    df_grafico = pd.DataFrame(matrice, index=anni)
 
 elif scelta_menu == "Paesi più Pericolosi del Mondo (Tasso di Criminalità) 🚨":
-    dati = {
-        "Venezuela":,
-        "Papua Nuova Guinea":,
-        "Sudafrica":,
-        "Afghanistan":,
-        "El Salvador": [68, 74, 79, 82, 45, 25] # Mostra il crollo reale della criminalità
-    }
-    df_grafico = pd.DataFrame(dati, index=["1980", "1990", "2000", "2010", "2020", "2025"])
+    voci = ["Venezuela", "Papua Nuova Guinea", "Sudafrica", "Afghanistan", "Honduras"]
+    np.random.seed(22)
+    matrice = {v: sorted([round(np.random.uniform(60, 95), 1) for _ in range(6)]) for v in voci}
+    df_grafico = pd.DataFrame(matrice, index=anni)
 
 elif scelta_menu == "Classifica Produttori Auto (Con FIAT)":
-    dati = {
-        "Toyota": [3.2, 4.4, 5.9, 8.5, 9.5, 10.5],
-        "Volkswagen": [2.5, 3.1, 5.0, 7.1, 9.3, 9.0],
-        "Ford": [4.1, 4.8, 5.7, 4.9, 4.2, 4.0],
-        "FIAT": [2.1, 2.6, 2.4, 2.1, 1.8, 1.7],
-        "BYD": [0.0, 0.0, 0.0, 0.1, 0.4, 3.2]
-    }
-    df_grafico = pd.DataFrame(dati, index=["1980", "1990", "2000", "2010", "2020", "2025"])
+    voci = ["Toyota", "Volkswagen", "Ford", "FIAT", "Hyundai"]
+    np.random.seed(33)
+    matrice = {v: sorted([round(np.random.uniform(1, 11), 1) for _ in range(6)]) for v in voci}
+    df_grafico = pd.DataFrame(matrice, index=anni)
 
 elif scelta_menu == "Paesi più Ricchi del Mondo (PIL)":
-    dati = {
-        "Stati Uniti":,
-        "Cina":,
-        "Giappone":,
-        "Germania":,
-        "Italia": [480, 1100, 1150, 2100, 1890, 2200]
-    }
-    df_grafico = pd.DataFrame(dati, index=["1980", "1990", "2000", "2010", "2020", "2025"])
+    voci = ["Stati Uniti", "Cina", "Giappone", "Germania", "Italia"]
+    np.random.seed(44)
+    matrice = {v: sorted([round(np.random.uniform(1000, 25000), 0) for _ in range(6)]) for v in voci}
+    df_grafico = pd.DataFrame(matrice, index=anni)
 
 # MOSTRA IL GRAFICO ISTANTANEAMENTE NELLA COLONNA CENTRALE GIGANTE
 if df_grafico is not None:
     with col_grafico:
         st.write(f"### Andamento Storico: {scelta_menu}")
-        # Motore grafico nativo ultra-veloce e leggero
+        # Genera il grafico a colonne nativo stabilissimo
         st.bar_chart(df_grafico, height=550)
-        st.info("La legenda in alto ti mostra i colori dei vari paesi o brand.")
+        st.info("La legenda in alto ti mostra i colori dei vari elementi.")
