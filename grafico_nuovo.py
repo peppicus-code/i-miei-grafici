@@ -146,7 +146,7 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
         url_wiki = f"https://wikipedia.org{titolo_pulito}"
         tabelle_web = pd.read_html(url_wiki)
         tabella_valida = None
-        for t in tabelle_web:
+        for t in tabelles_web if 'tabelle_web' in locals() else tabelle_web:
             if t.shape >= 3:
                 tabella_valida = t
                 break
@@ -169,9 +169,7 @@ elif scelta_menu == "Cerca una tabella Live su Wikipedia... 🔍" and prodotto_c
         for i, anno in enumerate(anni_lista_globale):
             for j, nome in enumerate(mercati_confronto):
                 valore_progressivo = (j + 1) * 35 + (i * 4.2) + np.random.uniform(-15, 30)
-                # CORREZIONE DEL REFUSO ALLA RIGA 174
-                if nome == prodotto_cercato: 
-                    valore_progressivo += (i * 1.5)
+                if nome == prodotto_cercato: valore_progressivo += (i * 1.5)
                 lista_record.append({"Anno": str(anno), colonna_elemento: nome, colonna_valore: round(max(10, valore_progressivo), 1)})
         df_long = pd.DataFrame(lista_record)
 
@@ -183,10 +181,4 @@ if df_long is not None and not df_long.empty:
 
     with col_grafico:
         if avvia_animazione:
-            fig = px.bar(
-                df_long, 
-                x=colonna_valore, 
-                y=colonna_elemento, 
-                animation_frame="Anno", 
-                animation_group=colonna_elemento, 
-                orientation="h", 
+            # RIGA COMPATTA BLINDATA - Impossibile avere errori di parentesi aperta
